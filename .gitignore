@@ -1,10 +1,8 @@
-# Created by https://www.toptal.com/developers/gitignore/api/haskell
-# Edit at https://www.toptal.com/developers/gitignore?templates=haskell
+data
 
-### Haskell ###
-/dist
-/dist-*
-/cabal-dev
+dist
+dist-*
+cabal-dev
 *.o
 *.hi
 *.hie
@@ -25,7 +23,3 @@ cabal.project.local
 cabal.project.local~
 .HTF/
 .ghc.environment.*
-
-# End of https://www.toptal.com/developers/gitignore/api/haskell
-
-/data
