@@ -2,9 +2,9 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=haskell
 
 ### Haskell ###
-dist
-dist-*
-cabal-dev
+/dist
+/dist-*
+/cabal-dev
 *.o
 *.hi
 *.hie
@@ -28,4 +28,4 @@ cabal.project.local~
 
 # End of https://www.toptal.com/developers/gitignore/api/haskell
 
-data
+/data
