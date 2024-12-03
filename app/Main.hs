@@ -7,7 +7,7 @@ import Day_01 (day_01)
 import Day_02 (day_02)
 import Day_03 (day_03)
 
-showRes :: (Int, Int) -> IO ()
+showRes :: (Integer, Integer) -> IO ()
 showRes (a, b) = do
     putStrLn $ show a
     putStr $ show b
@@ -24,5 +24,5 @@ main = do
         3 -> showRes $ day_03 input
         x -> putStrLn $ (show x) ++ " is not a valid day"
   where 
-    readInt :: String -> Int
+    readInt :: String -> Integer
     readInt = read

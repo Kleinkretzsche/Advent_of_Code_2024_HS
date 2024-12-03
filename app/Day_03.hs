@@ -1,18 +1,16 @@
 module Day_03 where
 
-import GHC.Num
 import Text.Parsec 
 import Data.Functor.Identity
-import Data.Either
 
-type Parser a = ParsecT String Int Identity a
+type Parser a = ParsecT String Integer Identity a
 
-num :: Parser Int
+num :: Parser Integer
 num = do 
     c <- digit
     return (read [c])
 
-smallNum :: Parser Int
+smallNum :: Parser Integer
 smallNum = do
     first  <- num
     second <- optionMaybe num 
@@ -23,10 +21,10 @@ smallNum = do
                         Nothing  -> return (first*10 +x)
         Nothing  -> return (first)
 
-mulExpr :: Parser Int
+mulExpr :: Parser Integer
 mulExpr = between (string "mul(") (char ')') mul
 
-mul :: Parser Int
+mul :: Parser Integer
 mul = do
     s  <- getState
     n1 <- smallNum
@@ -34,12 +32,12 @@ mul = do
     n2 <- smallNum
     return (s*n1*n2)
 
-skip :: Parser Int
+skip :: Parser Integer
 skip = do 
     _ <- anyToken
     return 0
 
-switchState :: Parser Int
+switchState :: Parser Integer
 switchState = do 
     s <- getState
     case s of 
@@ -47,23 +45,23 @@ switchState = do
         _ -> do _ <- string "don't()"; putState 0
     return 0
 
-mulExpr' :: Parser Int
+mulExpr' :: Parser Integer
 mulExpr' = try (mulExpr) <|> skip
 
-day_03_a :: Parser Int
+day_03_a :: Parser Integer
 day_03_a = do 
     res <- many mulExpr'
     return $ sum res
 
-day_03_b :: Parser Int
+day_03_b :: Parser Integer
 day_03_b = do
     res <- many (try (switchState) <|> mulExpr')
     return $ sum res
 
-day_03 :: String -> (Int, Int) 
+day_03 :: String -> (Integer, Integer) 
 day_03 s = (unwrap day_03_a s, unwrap day_03_b s)
     where 
-        unwrap :: Parser Int -> String -> Int
+        unwrap :: Parser Integer -> String -> Integer
         unwrap p str = case (runParser p 1 "" str) of
                            Right res -> res
                            Left  _   -> -1
