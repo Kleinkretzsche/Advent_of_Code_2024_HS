@@ -18,7 +18,7 @@ common warnings
 executable aoc
     import:           warnings
     main-is:          Main.hs
-    other-modules:    Day_01, Day_02
+    other-modules:    Day_01, Day_02, Day_03
     -- other-extensions:
     build-depends:    base ^>=4.17.2.1
                       , MissingH ^>= 1.6.0.1
@@ -26,5 +26,6 @@ executable aoc
                       , containers ^>=0.7
                       , vector ^>=0.13.1.0
                       , mtl ^>=2.3.1
+                      , parsec ^>=3.1.17.0
     hs-source-dirs:   app
     default-language: Haskell2010

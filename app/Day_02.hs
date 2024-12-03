@@ -24,15 +24,12 @@ checkValidity_a l = (all (\x -> x > 0 && x <= 3)  $ view2 (-) l) ||
 checkValidity_b :: [Int] -> Bool
 checkValidity_b = any (checkValidity_a) . getSublists 
 
-day02_a :: [[Int]] -> Int
-day02_a = length . filter checkValidity_a
+day_02_a :: [[Int]] -> Int
+day_02_a = length . filter checkValidity_a
 
-day02_b :: [[Int]] -> Int
-day02_b = length . filter checkValidity_b
+day_02_b :: [[Int]] -> Int
+day_02_b = length . filter checkValidity_b
 
-day_02 :: IO ()
-day_02 = do
-    input <- readFile "data/02.in"
-    let nums = parseInput input
-    putStrLn $ show $ day02_a nums
-    putStrLn $ show $ day02_b nums
+day_02 :: String -> (Int, Int)
+day_02 s = (day_02_a input, day_02_b input)
+    where input = parseInput s
