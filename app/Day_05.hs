@@ -22,9 +22,9 @@ parseEq = do
     n2 <- num
     _  <- char '\n'
     m  <- getState
-    case (M.lookup n1 m) of 
-        (Just xs) -> putState $ M.update (const $ Just $ S.insert n2 xs) n1 m
-        Nothing   -> putState $ M.insert n1 (S.singleton n2) m
+    case (M.lookup n2 m) of 
+        (Just xs) -> putState $ M.update (const $ Just $ S.insert n1 xs) n2 m
+        Nothing   -> putState $ M.insert n2 (S.singleton n1) m
 
 lineOfNums :: Parser [Int]
 lineOfNums = do
@@ -45,11 +45,26 @@ getFullInput = do
     return (s, lines)
 
 lineInOrder :: EqMap -> [Int] -> Bool
-lineInOrder _ []     = True
-lineInOrder m (x:xs) = undefined
+lineInOrder _ [] = True
+lineInOrder m xs = go m xs S.empty 
+    where 
+        go :: EqMap -> [Int] -> S.Set Int -> Bool
+        go m (x:xs) bad = if not (x `elem` bad) 
+                          then case (M.lookup x m) of
+                                   (Just l) -> True && go m xs (bad `S.union` l)
+                                   Nothing  -> True && go m xs bad
+                          else False
+        go _ [] _      = True
+
+takeMiddle :: [a] -> a
+takeMiddle xs = xs !! ((length xs) `div` 2)
+
+day_05_a :: EqMap -> [[Int]] -> Int
+day_05_a m ls = sum $ takeMiddle <$> Prelude.filter (lineInOrder m) ls
 
 parseInput :: String -> Either ParseError (EqMap, [[Int]]) 
 parseInput s = runParser (getFullInput) (M.fromList []) "" s
 
 day_05 :: String -> (Integer, Integer)
-day_05 s = undefined
+day_05 s = (fromIntegral $ day_05_a m ls, 0)
+    where Right (m, ls) = runParser getFullInput (M.fromList []) "" s
