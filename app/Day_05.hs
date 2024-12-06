@@ -49,21 +49,37 @@ lineInOrder _ [] = True
 lineInOrder m xs = go m xs S.empty 
     where 
         go :: EqMap -> [Int] -> S.Set Int -> Bool
+        go _ []     _   = True
         go m (x:xs) bad = if not (x `elem` bad) 
                           then case (M.lookup x m) of
                                    (Just l) -> True && go m xs (bad `S.union` l)
                                    Nothing  -> True && go m xs bad
                           else False
-        go _ [] _      = True
 
 takeMiddle :: [a] -> a
 takeMiddle xs = xs !! ((length xs) `div` 2)
 
-day_05_a :: EqMap -> [[Int]] -> Int
-day_05_a m ls = sum $ takeMiddle <$> Prelude.filter (lineInOrder m) ls
+sortBy :: EqMap -> [Int] -> [Int]
+sortBy m xs = go m [] xs S.empty 
+    where 
+        go :: EqMap -> [Int] -> [Int]-> S.Set Int -> [Int]
+        go _ r [] _       = r
+        go m p (x:xs) bad = 
+            if not (x `elem` bad) 
+            then case (M.lookup x m) of
+                (Just l) -> go m (p<>[x]) xs (bad `S.union` l)
+                Nothing  -> go m (p<>[x]) xs bad
+            else go m [] ((init p) ++ [x] ++ [last p] ++ xs) S.empty
+        
 
 parseInput :: String -> Either ParseError (EqMap, [[Int]]) 
 parseInput s = runParser (getFullInput) (M.fromList []) "" s
+
+day_05_a :: EqMap -> [[Int]] -> Int
+day_05_a m ls = sum $ takeMiddle <$> Prelude.filter (lineInOrder m) ls
+
+day_05_b :: EqMap -> [[Int]] -> Int
+day_05_b m ls = sum $ (takeMiddle . sortBy m) <$> Prelude.filter (not . lineInOrder m) ls
 
 day_05 :: String -> (Integer, Integer)
 day_05 s = (fromIntegral $ day_05_a m ls, 0)
