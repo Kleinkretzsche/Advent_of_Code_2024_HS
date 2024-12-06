@@ -8,7 +8,7 @@ import Day_02 (day_02)
 import Day_03 (day_03)
 import Day_04 (day_04)
 import Day_05 (day_05)
-import Day_06 (day_06)
+import Day_06
 
 showRes :: (Integer, Integer) -> IO ()
 showRes (a, b) = do

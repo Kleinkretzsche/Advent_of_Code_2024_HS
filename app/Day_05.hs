@@ -1,10 +1,10 @@
 module Day_05 where
 
+import Data.Either (fromRight)
 import Data.Set as S
 import Prelude hiding (lookup)
 import Data.Map as M
 import Text.Parsec 
-import Data.Functor.Identity
 
 
 type Parser = Parsec String EqMap
@@ -41,8 +41,8 @@ getFullInput :: Parser (EqMap, [[Int]])
 getFullInput = do
     fillParser
     s <- getState
-    lines <- many lineOfNums
-    return (s, lines)
+    ls <- many lineOfNums
+    return (s, ls)
 
 lineInOrder :: EqMap -> [Int] -> Bool
 lineInOrder _ [] = True
@@ -50,10 +50,10 @@ lineInOrder m xs = go m xs S.empty
     where 
         go :: EqMap -> [Int] -> S.Set Int -> Bool
         go _ []     _   = True
-        go m (x:xs) bad = if not (x `elem` bad) 
+        go m' (x:xs') bad = if not (x `elem` bad) 
                           then case (M.lookup x m) of
-                                   (Just l) -> True && go m xs (bad `S.union` l)
-                                   Nothing  -> True && go m xs bad
+                                   (Just l) -> True && go m' xs' (bad `S.union` l)
+                                   Nothing  -> True && go m' xs' bad
                           else False
 
 takeMiddle :: [a] -> a
@@ -64,12 +64,12 @@ sortBy m xs = go m [] xs S.empty
     where 
         go :: EqMap -> [Int] -> [Int]-> S.Set Int -> [Int]
         go _ r [] _       = r
-        go m p (x:xs) bad = 
+        go m' p (x:xs') bad = 
             if not (x `elem` bad) 
             then case (M.lookup x m) of
-                (Just l) -> go m (p<>[x]) xs (bad `S.union` l)
-                Nothing  -> go m (p<>[x]) xs bad
-            else go m [] ((init p) ++ [x] ++ [last p] ++ xs) S.empty
+                (Just l) -> go m' (p<>[x]) xs' (bad `S.union` l)
+                Nothing  -> go m' (p<>[x]) xs' bad
+            else go m [] ((init p) ++ [x] ++ [last p] ++ xs') S.empty
 
 parseInput :: String -> Either ParseError (EqMap, [[Int]]) 
 parseInput s = runParser (getFullInput) (M.fromList []) "" s
@@ -82,4 +82,5 @@ day_05_b m ls = sum $ (takeMiddle . sortBy m) <$> Prelude.filter (not . lineInOr
 
 day_05 :: String -> (Integer, Integer)
 day_05 s = (fromIntegral $ day_05_a m ls, fromIntegral $ day_05_b m ls)
-    where Right (m, ls) = runParser getFullInput (M.fromList []) "" s
+    where 
+        (m, ls) = fromRight (M.fromList [], [])$ parseInput s
