@@ -70,7 +70,6 @@ sortBy m xs = go m [] xs S.empty
                 (Just l) -> go m (p<>[x]) xs (bad `S.union` l)
                 Nothing  -> go m (p<>[x]) xs bad
             else go m [] ((init p) ++ [x] ++ [last p] ++ xs) S.empty
-        
 
 parseInput :: String -> Either ParseError (EqMap, [[Int]]) 
 parseInput s = runParser (getFullInput) (M.fromList []) "" s
@@ -82,5 +81,5 @@ day_05_b :: EqMap -> [[Int]] -> Int
 day_05_b m ls = sum $ (takeMiddle . sortBy m) <$> Prelude.filter (not . lineInOrder m) ls
 
 day_05 :: String -> (Integer, Integer)
-day_05 s = (fromIntegral $ day_05_a m ls, 0)
+day_05 s = (fromIntegral $ day_05_a m ls, fromIntegral $ day_05_b m ls)
     where Right (m, ls) = runParser getFullInput (M.fromList []) "" s
