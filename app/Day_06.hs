@@ -109,9 +109,8 @@ brute g = S.toList $ allPos `S.difference` obstructed
         obstructed = S.fromList $ (pos g):(indexWhere (== '#') (patrol g))
 
 day_06_b :: Guard -> Int
-day_06_b g = length $ Prelude.filter (not . validWithBlock g) (potentialBlocks $ obstructionOrder g)
--- day_06_b g = length $ Prelude.filter (not . validWithBlock g) (brute g)
-
+-- day_06_b g = length $ Prelude.filter (not . validWithBlock g) (potentialBlocks $ obstructionOrder g)
+day_06_b g = length $ Prelude.filter (not . validWithBlock g) (brute g)
         
 day_06 :: String -> (Integer, Integer)
 day_06 s = (fromIntegral $ day_06_a g, fromIntegral $ day_06_b g)
