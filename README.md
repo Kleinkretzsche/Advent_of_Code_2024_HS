@@ -4,5 +4,5 @@ I am trying all the challanges from AoC in haskell. Lets see how it works out :)
 
 To run: 
 ```
-cabal run -v0 -- aoc "$(inpu file (has to contain the number of the day))"
+cabal run -v0 -- aoc "$(input file for the day)"
 ```
