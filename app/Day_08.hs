@@ -2,9 +2,9 @@ module Day_08 where
 
 import Data.List (nub)
 import qualified Data.Set as S
-import qualified Util.Field2 as F
+import qualified Util.Field as F
 
-antinodes :: F.Field2 Char -> Char -> S.Set (Int, Int)
+antinodes :: F.Field Char -> Char -> S.Set (Int, Int)
 antinodes f c = 
     S.filter (`F.validIndex` f) $
     S.fromList $ concat $ 
@@ -15,7 +15,7 @@ antinodes f c =
         (a /= b)]
     where ixs = F.indexWhere (== c) f
 
-longAntinodes :: F.Field2 Char -> Char -> S.Set (Int, Int)
+longAntinodes :: F.Field Char -> Char -> S.Set (Int, Int)
 longAntinodes f c = 
     S.filter (`F.validIndex` f) $
     S.fromList $ concat $ 

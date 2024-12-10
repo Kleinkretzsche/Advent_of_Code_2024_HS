@@ -1,13 +1,13 @@
 module Day_06 where
 
-import qualified Util.Field2 as F
+import qualified Util.Field as F
 import qualified Data.Map as M
 import qualified Data.Set as S
 
 data Direction = U | D | L | R deriving(Show, Eq)
 
 data Guard = Guard 
-    { patrol :: F.Field2 Char
+    { patrol :: F.Field Char
     , pos :: (Int, Int)
     , seen :: S.Set (Int, Int)
     , facing :: Direction
@@ -42,7 +42,7 @@ step g@(Guard f p s l) =
     case (look g) of 
         Just '#' -> turn g
         Just _   -> Guard f (addTup p $ dirToOffs l) (p `S.insert` s) l 
-        Nothing  -> Guard (F.F2 (M.fromList []) (0,0)) (-1,-1) (p `S.insert` s) l 
+        Nothing  -> Guard (F.MkField (M.fromList []) (0,0)) (-1,-1) (p `S.insert` s) l 
 
 stepW :: Guard -> Guard
 stepW gu = 
@@ -63,7 +63,7 @@ detectLoop g = (-1, -1) /= (pos $ snd $ until (\(vis, p) -> (pos p) == (-1, -1) 
                                               (\(vis, p) -> ((pos p):vis, stepW p)) ([],g))
 
 guardGetsCaught :: Guard -> (Int, Int) -> Bool
-guardGetsCaught (Guard (F.F2 m dim) p s l) i = detectLoop (Guard (F.F2 (M.insert i '#' m) dim) p s l)
+guardGetsCaught (Guard (F.MkField m dim) p s l) i = detectLoop (Guard (F.MkField (M.insert i '#' m) dim) p s l)
 
 brute :: Guard -> [(Int, Int)]
 brute g = S.toList $ allPos `S.difference` obstructed
