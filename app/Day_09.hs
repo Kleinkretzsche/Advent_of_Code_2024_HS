@@ -3,6 +3,16 @@ module Day_09 where
 import Data.Vector (Vector)
 import qualified Data.Vector as Vec
 
+data Buffer a = MkBuffer
+    { buf   :: Vector a 
+    , start :: Int
+    , end   :: Int
+    } 
+    deriving Show
+
+bufFromVec :: Vector a -> Buffer a
+bufFromVec v = MkBuffer v 0 (Vec.length v - 1)
+
 prepareInput :: String -> Vector Char
 prepareInput s = go s True 0
     where 
@@ -19,24 +29,19 @@ swapIndex v a b =
         lb = v Vec.! b
     in v Vec.// [(a, lb), (b, la)]
 
-efficientSwap :: Vector Char -> Vector Char
-efficientSwap vec = 
-    fst $ 
-    until 
-        (\(_, (l, h)) -> l > h) 
-        update
-        (start , (0, (length vec) - 1))
-    where 
-        start = swapIndex vec 0 ((length vec) - 1)
-
-        update :: (Vector Char, (Int, Int)) -> (Vector Char, (Int, Int))
-
-        update (v', (l, h)) = 
-            let v'' = swapIndex v' l h
-            in (v'', (stepUp v'' l, stepDown v'' h))
-
-        stepUp   v' i = until (\x -> v' Vec.! x == '.') (+ 1) i
-        stepDown v' i = until (\x -> v' Vec.! x /= '.') (\x -> x - 1) i
+advanceBuf :: Buffer Char -> Buffer Char
+advanceBuf b = 
+    let 
+        b'  = until (\(MkBuffer x y z) -> y >= z || (x Vec.! y) == '.') 
+                    (\(MkBuffer x y z) -> MkBuffer x (y+1) z) 
+                    b
+        b'' = until (\(MkBuffer x y z) -> z <= y || (x Vec.! z) /= '.') 
+                    (\(MkBuffer x y z) -> MkBuffer x y (z - 1)) 
+                    b'
+    in 
+        if (start b'' >= end b'')
+        then b''
+        else MkBuffer (swapIndex (buf b'') (start b'') (end b'')) (start b'' + 1) (end b'' - 1)
 
 checksum :: Vector Char -> Integer
 checksum v = sum $ zipWith (*) (toIntList v) [0..]
@@ -45,7 +50,7 @@ checksum v = sum $ zipWith (*) (toIntList v) [0..]
         toIntList v' = (\x -> read [x]) <$> Vec.toList v'
 
 day_09_a :: Vector Char -> Integer
-day_09_a = checksum . Vec.takeWhile (/= '.') . efficientSwap
+day_09_a v = checksum $ Vec.filter (/= '.') $ buf $ until (\(MkBuffer _ l h) -> l >= h) advanceBuf $ bufFromVec v
 
 day_09 :: String -> (Integer, Integer)
 day_09 s = (day_09_a v, -1)
