@@ -49,5 +49,5 @@ day_10_b :: TopMap -> Integer
 day_10_b t = sum $ (countAllWays t) <$> startingPositions t
 
 day_10 :: String -> (Integer, Integer)
-day_10 s = (day_10_a input, -1)
+day_10 s = (day_10_a input, day_10_b input)
     where input = getInput s
