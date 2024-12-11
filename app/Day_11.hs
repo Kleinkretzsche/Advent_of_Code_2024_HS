@@ -1,23 +1,53 @@
 module Day_11 where
 
-readInput :: String -> [Integer]
-readInput = map read . words
+import Data.Monoid
 
-blinkOnce :: [Integer] -> [Integer]
-blinkOnce [] = []
-blinkOnce (x:xs)
-    | x == 0 = (1:blinkOnce xs)
-    | len `mod` 2 == 0 = (read a:read b:blinkOnce xs)
-        where 
-            str = show x
-            len = length str
-            middle = len `div` 2
-            (a, b) = splitAt middle str
-blinkOnce (x:xs) = ((x * 2024):blinkOnce xs)
+-- https://stackoverflow.com/questions/3208258/memoization-in-haskell
 
-blink :: Int -> [Integer] -> [Integer]
-blink i xs = (iterate blinkOnce xs) !! i
+data Tree v = Tree (Tree v) v (Tree v) deriving Show
+
+memo1 :: (Integer -> t) -> Integer -> t
+memo1 f = index nats
+  where
+    nats = go 0 1
+    go i s = Tree (go (i + s) s') (f i) (go (i + s') s')
+      where
+        s' = 2 * s
+    index (Tree l v r) i
+        | i < 0 = f i
+        | i == 0 = v
+        | otherwise = case (i - 1) `divMod` 2 of
+            (i', 0) -> index l i'
+            (i', _) -> index r i'
+
+memo2 :: (Integer -> Integer -> t) -> (Integer -> Integer -> t)
+memo2 f = memo1 (memo1 . f)
+
+blink :: Integer -> Integer -> Sum Integer
+blink = memo2 blink'
+  where
+    blink' :: Integer -> Integer -> Sum Integer
+    blink' c n
+        | c == 0 = 1
+        | n == 0 = blink c' 1
+        | even digits = blink c' l <> blink c' r
+        | otherwise = blink c' $ n * 2024
+      where
+        digits :: Integer
+        digits = succ . floor . logBase 10 . fromIntegral $ n
+        (l, r) = n `divMod` (10 ^ (digits `div` 2))
+        c' = pred c
+
+doBlinks :: Integer -> [Integer] -> Integer
+doBlinks n = getSum . mconcat . fmap (blink n)
+
+day_11_a :: [Integer] -> Integer
+day_11_a = doBlinks 25
+
+day_11_b :: [Integer] -> Integer
+day_11_b = doBlinks 75
 
 day_11 :: String -> (Integer, Integer)
-day_11 s = (fromIntegral $ length $ blink 25 input, fromIntegral $ length $ blink 75 input)
-    where input = readInput s
+day_11 s = (day_11_a input, day_11_b input)
+    where input = map (read) $ words s
+
