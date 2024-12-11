@@ -31,15 +31,6 @@ blockLayout s =
 showBlockLayout :: [Block] -> String
 showBlockLayout = concat . map show
 
-compactBlocks :: [Block] -> [Block]
-compactBlocks bs =
-    Vec.toList $
-    snd $
-    until 
-    (\(i, _) -> i == 0)
-    (\(i, v) -> (i - 1, fitBlock i v))
-    (length bs - 1, Vec.fromList bs)
-
 fitBlock :: Int -> Vector Block -> Vector Block
 fitBlock i v = 
     case (v Vec.! i) of 
@@ -48,6 +39,14 @@ fitBlock i v =
     where 
         found ind sz = (isEmptyBlock $ v Vec.! ind) && (size (v Vec.! ind)) >= sz
 
+compactBlocks :: [Block] -> [Block]
+compactBlocks bs =
+    Vec.toList $
+    snd $
+    until 
+    (\(i, _) -> i == 0)
+    (\(i, v) -> (i - 1, fitBlock i v))
+    (length bs - 1, Vec.fromList bs)
 
 swapIndex :: Vector Block -> Int -> Int -> Vector Block
 swapIndex v l h

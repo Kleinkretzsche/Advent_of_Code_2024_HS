@@ -12,7 +12,8 @@ import Day_06 (day_06)
 import Day_07 (day_07)
 import Day_08 (day_08)
 import Day_09 (day_09)
-import Day_10 
+import Day_10 (day_10)
+import Day_11
 
 showRes :: (Integer, Integer) -> IO ()
 showRes (a, b) = do
@@ -36,6 +37,7 @@ main = do
         8  -> showRes $ day_08 input
         9  -> showRes $ day_09 input
         10 -> showRes $ day_10 input
+        11 -> showRes $ day_11 input
         x -> putStrLn $ (show x) ++ " is not a valid day"
   where 
     readInt :: String -> Integer
