@@ -42,7 +42,7 @@ doBlinks :: Integer -> [Integer] -> Integer
 doBlinks n = getSum . mconcat . fmap (blink n)
 
 day_11_a :: [Integer] -> Integer
-day_11_a = doBlinks 25
+day_11_a = 
 
 day_11_b :: [Integer] -> Integer
 day_11_b = doBlinks 75
