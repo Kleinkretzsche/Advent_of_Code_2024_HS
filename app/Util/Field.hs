@@ -19,6 +19,9 @@ instance Show t => Show (Field t) where
 instance (Functor Field) where
     fmap f (MkField m d) = MkField (M.fromList $ (\(i, x) -> (i, f x)) <$> M.toList m) d
 
+const :: (Int, Int) -> a -> Field a
+const d def = MkField (M.fromList $ [((y,x), def) | x <- [0..snd d], y <- [0..snd d]]) d
+
 lookup :: (Int, Int) -> Field a -> Maybe a
 lookup i (MkField m _) = M.lookup i m
 
