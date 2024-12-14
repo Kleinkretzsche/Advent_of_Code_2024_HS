@@ -1,9 +1,9 @@
 module Day_14 where
 
+import Data.List.Utils (countElem)
+import Data.List.Split (chunksOf)
 import Text.Parsec
 import Data.Either (fromRight)
-
-import qualified Util.Field as F
 
 type Vec2 = (Int, Int)
 type Vec4 = (Int, Int, Int, Int)
@@ -14,6 +14,15 @@ data Robot = MkRobot
   { pos :: Vec2
   , vel :: Vec2
   } deriving (Show, Eq)
+
+showRobots :: Vec2 -> [Robot] -> String
+showRobots dim rs = 
+  unlines $
+  (map concat) <$> 
+  chunksOf (fst dim) $
+  (\x -> show $ x `countElem` positions) <$> 
+  [(x, y) | y <- [0..snd dim - 1] , x <- [0..fst dim -1]]
+  where positions = pos <$> rs
 
 vec2 :: Parser Vec2
 vec2 = do
@@ -31,13 +40,13 @@ robot = do
   _ <- string " v="
   v <- vec2
   _ <- char '\n'
-  return $ MkRobot p v
+  return $ MkRobot p v 
 
 calcPositions :: Int -> Vec2 -> [Robot] -> [Robot]
-calcPositions i (y, x) = fmap update 
+calcPositions i (x, y) = fmap update 
   where 
     update (MkRobot p v) = MkRobot 
-                           (diMapTup ((`mod` y), (`mod` x)) $
+                           (diMapTup ((`mod` x), (`mod` y)) $
                            p .+. 
                            mapTup (*i) v)
                            v
@@ -55,21 +64,24 @@ mapTup f = diMapTup (f, f)
 (a1, a2, a3, a4) ..+.. (b1, b2, b3, b4) = (a1 + b1, a2 + b2, a3 + b3, a4 + b4)
 
 countQuadrants :: (Int, Int) -> [Robot] -> Vec4
-countQuadrants (ym, xm) = foldl1 (..+..) . map quadrant
+countQuadrants (xm, ym) = foldl1 (..+..) . map quadrant
   where 
-    yh = ym `div` 2
     xh = xm `div` 2
-    quadrant (MkRobot (y, x) _)
-      | y < yh && x < xh = (1, 0, 0, 0) 
-      | y < yh && x > xh = (0, 1, 0, 0) 
-      | y > yh && x < xh = (0, 0, 1, 0) 
-      | y > yh && x > xh = (0, 0, 0, 1) 
+    yh = ym `div` 2
+    quadrant (MkRobot (x, y) _)
+      | x < xh && y < yh = (1, 0, 0, 0) 
+      | x < xh && y > yh = (0, 1, 0, 0) 
+      | x > xh && y < yh = (0, 0, 1, 0) 
+      | x > xh && y > yh = (0, 0, 0, 1) 
       | otherwise        = (0, 0, 0, 0) 
-
-day_14_a :: [Robot] -> Integer
-day_14_a = 
-  let dim = (103, 101)
-  in fromIntegral . (\(a,b,c,d) -> a*b*c*d) . countQuadrants dim . calcPositions 100 dim
 
 readInput :: String -> [Robot]
 readInput = fromRight [] . runParser (many robot) () ""
+
+day_14_a :: [Robot] -> Integer
+day_14_a = 
+  let dim = (101, 103)
+  in fromIntegral . (\(a,b,c,d) -> a*b*c*d) . countQuadrants dim . calcPositions 100 dim
+
+day_14 :: String -> (Integer, Integer)
+day_14 s = (day_14_a $ readInput s, -1)
