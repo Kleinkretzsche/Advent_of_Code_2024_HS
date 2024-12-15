@@ -41,6 +41,7 @@ main = do
         10 -> showRes $ day_10 input
         11 -> showRes $ day_11 input
         12 -> showRes $ day_12 input
+        14 -> showRes $ day_14 input
         x -> putStrLn $ (show x) ++ " is not a valid day"
   where 
     readInt :: String -> Integer

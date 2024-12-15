@@ -18,9 +18,8 @@ data Robot = MkRobot
 showRobots :: Vec2 -> [Robot] -> String
 showRobots dim rs = 
   unlines $
-  (map concat) <$> 
   chunksOf (fst dim) $
-  (\x -> show $ x `countElem` positions) <$> 
+  (\x -> if x `elem` positions then '@' else ' ') <$> 
   [(x, y) | y <- [0..snd dim - 1] , x <- [0..fst dim -1]]
   where positions = pos <$> rs
 
