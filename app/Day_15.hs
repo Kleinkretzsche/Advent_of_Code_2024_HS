@@ -4,7 +4,5 @@ import Text.Parsec
 
 data Direction = U | D | L | R deriving (Show, Eq)
 
-k
-
 day_15 :: String -> (Integer, Integer)
 day_15 = \_ -> (-1, -1)
