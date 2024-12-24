@@ -26,6 +26,7 @@ import Day_15 (day_15)
 -- import Day_21 (day_21)
 -- import Day_22 (day_22)
 import Day_23
+import Day_24
 
 showRes :: (Integer, Integer) -> IO ()
 showRes (a, b) = do
